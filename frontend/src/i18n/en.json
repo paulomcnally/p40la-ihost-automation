@@ -1,0 +1,165 @@
+{
+  "app": {
+    "title": "p40la",
+    "loading": "Loading...",
+    "empty": "No records",
+    "back": "Back",
+    "close": "Close",
+    "save": "Save",
+    "cancel": "Cancel"
+  },
+  "menu": {
+    "dashboard": "Dashboard",
+    "apps": "Apps",
+    "plugins": "Plugins",
+    "settings": "Settings"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "subtitle": "Main panel",
+    "empty": "This module has no content yet."
+  },
+  "apps": {
+    "title": "Apps",
+    "subtitle": "Providers and services with access to your account.",
+    "empty": "No apps registered yet.",
+    "name": "Name",
+    "name_placeholder": "E.g. Claro Nicaragua",
+    "create": "New app",
+    "edit": "Edit",
+    "delete": "Delete",
+    "delete_confirm": "Delete this app and all its accounts?",
+    "account_count": "accounts",
+    "saved": "Saved successfully",
+    "deleted": "Deleted successfully",
+    "accounts": "Accounts",
+    "accounts_subtitle": "Services of the app. Each account has a unique identifier.",
+    "accounts_empty": "This app has no accounts yet.",
+    "create_account": "New account",
+    "edit_account": "Edit account",
+    "delete_account": "Delete account",
+    "delete_account_confirm": "Delete this account?",
+    "identifier": "Identifier",
+    "identifier_placeholder": "E.g. service number (A1B2C3)",
+    "label": "Label",
+    "label_placeholder": "E.g. Fiber Internet (optional)",
+    "credentials": "Credentials",
+    "credentials_placeholder": "{\n  \"username\": \"...\",\n  \"password\": \"...\"\n}",
+    "credentials_hint": "JSON object with the site access credentials.",
+    "credentials_plugin_hint": "Select a plugin to configure credentials.",
+    "invalid_json": "Credentials must be a valid JSON object.",
+    "credentials_required": "Required",
+    "credentials_optional": "Optional",
+    "credentials_show": "Show",
+    "credentials_hide": "Hide",
+    "credentials_reveal_title": "Confirm with password",
+    "credentials_reveal_hint": "Enter your password to reveal the stored credentials.",
+    "credentials_password_label": "Your password",
+    "credentials_reveal_error": "Incorrect password.",
+    "credentials_schema_empty": "This plugin does not define credential fields.",
+    "plugin": "Plugin",
+    "plugin_none": "No plugin"
+  },
+  "settings": {
+    "title": "Settings",
+    "subtitle": "Application settings",
+    "empty": "No settings configured yet.",
+    "saved": "Settings saved",
+    "webhooks": {
+      "title": "Webhooks",
+      "subtitle": "Send fetched bills to p40la-ihost.",
+      "api_key": "Global API key",
+      "api_key_placeholder": "E.g. 7381d6dc...",
+      "api_key_hint": "Shared key (min 32 chars). Sent in the X-Webhook-Key header."
+    }
+  },
+  "plugins": {
+    "title": "Plugins",
+    "subtitle": "Available integrations with their version and source.",
+    "empty": "No plugins registered yet.",
+    "status": {
+      "active": "Active",
+      "deprecated": "Deprecated"
+    }
+  },
+  "bills": {
+    "title": "Bills",
+    "subtitle": "Fetch the account bills through its plugin.",
+    "empty": "No bill fetches for this account yet.",
+    "fetch": "Fetch bills",
+    "fetch_ok": "Bills fetched successfully",
+    "fetch_error": "Fetch failed. Check the error records.",
+    "plugin": "Associated plugin",
+    "no_plugin": "No plugin",
+    "plugin_updated": "Plugin updated",
+    "plugin_version": "Plugin version",
+    "plugin_hint": "The account fetches its bills using the selected plugin.",
+    "view": "View bills",
+    "today": "Today",
+    "older": "Older",
+    "newer": "Newer",
+    "page": "Page",
+    "last_run": "Last run",
+    "last_run_hint": "Go to the last run in history",
+    "tab": {
+      "historico": "History",
+      "config": "Configuration"
+    },
+    "status": {
+      "ok": "OK",
+      "error": "Error"
+    },
+    "period_unknown": "Unknown period",
+    "due_unknown": "Unknown due date",
+    "status_unknown": "Unknown status"
+  },
+  "webhooks": {
+    "saved": "Webhook saved",
+    "account_title": "Webhook & daily job",
+    "account_subtitle": "Sends the bills every day at the configured time.",
+    "url": "Webhook URL",
+    "url_placeholder": "http://localhost:8088/webhooks/{uuid}",
+    "schedule_time": "Run time",
+    "frequency": "Frequency",
+    "freq": {
+      "daily": "Daily",
+      "every_n_days": "Every N days",
+      "weekly": "Weekly",
+      "monthly": "Monthly"
+    },
+    "every_n_days": "Every how many days",
+    "weekly_days": "Week days",
+    "monthly_day": "Day of month (1-31)",
+    "test": "Send now",
+    "test_done": "Delivery completed.",
+    "delivered": "delivered",
+    "failed": "failed",
+    "last_run": "Last run",
+    "logs": "Event logs",
+    "logs_empty": "No webhook events for this account yet.",
+    "status": {
+      "ok": "Success",
+      "error": "Failed"
+    }
+  },
+  "login": {
+    "title": "Sign in",
+    "email": "Email",
+    "password": "Password",
+    "remember": "Remember me",
+    "submit": "Sign in",
+    "error": "Invalid email or password"
+  },
+  "setup": {
+    "title": "Initial setup",
+    "subtitle": "Create your admin user to get started.",
+    "email": "Email",
+    "password": "Password",
+    "password_confirm": "Confirm password",
+    "submit": "Create user",
+    "password_mismatch": "Passwords do not match"
+  },
+  "errors": {
+    "generic": "An error occurred. Please try again."
+  }
+}

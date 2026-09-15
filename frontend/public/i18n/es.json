@@ -1,0 +1,165 @@
+{
+  "app": {
+    "title": "p40la",
+    "loading": "Cargando...",
+    "empty": "No hay registros",
+    "back": "Volver",
+    "close": "Cerrar",
+    "save": "Guardar",
+    "cancel": "Cancelar"
+  },
+  "menu": {
+    "dashboard": "Dashboard",
+    "apps": "Apps",
+    "plugins": "Plugins",
+    "settings": "Configuración"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "subtitle": "Panel principal",
+    "empty": "Este módulo aún no tiene contenido."
+  },
+  "apps": {
+    "title": "Apps",
+    "subtitle": "Proveedores y servicios con acceso a tu cuenta.",
+    "empty": "Aún no hay apps registradas.",
+    "name": "Nombre",
+    "name_placeholder": "Ej. Claro Nicaragua",
+    "create": "Nueva app",
+    "edit": "Editar",
+    "delete": "Borrar",
+    "delete_confirm": "¿Borrar esta app y todas sus cuentas?",
+    "account_count": "cuentas",
+    "saved": "Guardado correctamente",
+    "deleted": "Borrado correctamente",
+    "accounts": "Cuentas",
+    "accounts_subtitle": "Servicios de la app. Cada cuenta tiene un identificador único.",
+    "accounts_empty": "Esta app aún no tiene cuentas.",
+    "create_account": "Nueva cuenta",
+    "edit_account": "Editar cuenta",
+    "delete_account": "Borrar cuenta",
+    "delete_account_confirm": "¿Borrar esta cuenta?",
+    "identifier": "Identificador",
+    "identifier_placeholder": "Ej. nº de servicio (A1B2C3)",
+    "label": "Etiqueta",
+    "label_placeholder": "Ej. Internet Fibra (opcional)",
+    "credentials": "Credenciales",
+    "credentials_placeholder": "{\n  \"username\": \"...\",\n  \"password\": \"...\"\n}",
+    "credentials_hint": "Objeto JSON con las credenciales de acceso al sitio.",
+    "credentials_plugin_hint": "Selecciona un plugin para configurar las credenciales.",
+    "invalid_json": "Las credenciales deben ser un objeto JSON válido.",
+    "credentials_required": "Obligatorio",
+    "credentials_optional": "Opcional",
+    "credentials_show": "Mostrar",
+    "credentials_hide": "Ocultar",
+    "credentials_reveal_title": "Confirmar con contraseña",
+    "credentials_reveal_hint": "Ingresa tu contraseña para revelar las credenciales guardadas.",
+    "credentials_password_label": "Tu contraseña",
+    "credentials_reveal_error": "Contraseña incorrecta.",
+    "credentials_schema_empty": "Este plugin no define campos de credenciales.",
+    "plugin": "Plugin",
+    "plugin_none": "Sin plugin"
+  },
+  "settings": {
+    "title": "Configuración",
+    "subtitle": "Ajustes de la aplicación",
+    "empty": "No hay ajustes configurados todavía.",
+    "saved": "Configuración guardada",
+    "webhooks": {
+      "title": "Webhooks",
+      "subtitle": "Envía las facturas consultadas a p40la-ihost.",
+      "api_key": "API key global",
+      "api_key_placeholder": "Ej. 7381d6dc...",
+      "api_key_hint": "Clave compartida (mínimo 32 caracteres). Se envía en el header X-Webhook-Key."
+    }
+  },
+  "plugins": {
+    "title": "Plugins",
+    "subtitle": "Integraciones disponibles con su versión y fuente.",
+    "empty": "Aún no hay plugins registrados.",
+    "status": {
+      "active": "Activo",
+      "deprecated": "Obsoleto"
+    }
+  },
+  "bills": {
+    "title": "Facturas",
+    "subtitle": "Consulta las facturas de la cuenta vía su plugin.",
+    "empty": "Aún no hay consultas de facturas para esta cuenta.",
+    "fetch": "Consultar facturas",
+    "fetch_ok": "Facturas consultadas correctamente",
+    "fetch_error": "La consulta falló. Revisa el registro de errores.",
+    "plugin": "Plugin asociado",
+    "no_plugin": "Sin plugin",
+    "plugin_updated": "Plugin actualizado",
+    "plugin_version": "Versión del plugin",
+    "plugin_hint": "La cuenta consulta sus facturas usando el plugin seleccionado.",
+    "view": "Ver facturas",
+    "today": "Hoy",
+    "older": "Más antiguos",
+    "newer": "Más recientes",
+    "page": "Página",
+    "last_run": "Última ejecución",
+    "last_run_hint": "Ir a la última ejecución en el historial",
+    "tab": {
+      "historico": "Histórico",
+      "config": "Configuración"
+    },
+    "status": {
+      "ok": "OK",
+      "error": "Error"
+    },
+    "period_unknown": "Periodo desconocido",
+    "due_unknown": "Vencimiento desconocido",
+    "status_unknown": "Estado desconocido"
+  },
+  "webhooks": {
+    "saved": "Webhook guardado",
+    "account_title": "Webhook y job diario",
+    "account_subtitle": "Envía las facturas cada día a la hora configurada.",
+    "url": "URL del webhook",
+    "url_placeholder": "http://localhost:8088/webhooks/{uuid}",
+    "schedule_time": "Hora de ejecución",
+    "frequency": "Frecuencia",
+    "freq": {
+      "daily": "Diario",
+      "every_n_days": "Cada N días",
+      "weekly": "Semanal",
+      "monthly": "Mensual"
+    },
+    "every_n_days": "Cada cuántos días",
+    "weekly_days": "Días de la semana",
+    "monthly_day": "Día del mes (1-31)",
+    "test": "Enviar ahora",
+    "test_done": "Envío completado.",
+    "delivered": "enviados",
+    "failed": "fallidos",
+    "last_run": "Última ejecución",
+    "logs": "Logs de eventos",
+    "logs_empty": "Aún no hay eventos de webhook para esta cuenta.",
+    "status": {
+      "ok": "Success",
+      "error": "Fallido"
+    }
+  },
+  "login": {
+    "title": "Iniciar sesión",
+    "email": "Email",
+    "password": "Contraseña",
+    "remember": "Recordarme",
+    "submit": "Entrar",
+    "error": "Email o contraseña incorrectos"
+  },
+  "setup": {
+    "title": "Configuración inicial",
+    "subtitle": "Crea tu usuario administrador para comenzar.",
+    "email": "Email",
+    "password": "Contraseña",
+    "password_confirm": "Confirmar contraseña",
+    "submit": "Crear usuario",
+    "password_mismatch": "Las contraseñas no coinciden"
+  },
+  "errors": {
+    "generic": "Ocurrió un error. Intenta de nuevo."
+  }
+}

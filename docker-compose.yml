@@ -1,0 +1,18 @@
+services:
+  p40la-ihost-automation:
+    build: .
+    image: paulomcnally/p40la-ihost-automation:latest
+    container_name: p40la-ihost-automation
+    restart: unless-stopped
+    ports:
+      - "8089:8089"
+    volumes:
+      - p40la-ihost-automation-data:/app/data
+    environment:
+      - PORT=8089
+      - DATA_DIR=/app/data
+      - LOG_LEVEL=info
+      - VERSION=0.1.7
+
+volumes:
+  p40la-ihost-automation-data:

@@ -1,0 +1,1 @@
+ALTER TABLE webhook_logs ADD COLUMN http_status INTEGER;

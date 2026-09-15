@@ -1,0 +1,5 @@
+DROP TABLE IF EXISTS bills;
+
+ALTER TABLE accounts DROP COLUMN plugin_name;
+
+DROP TABLE IF EXISTS plugins;

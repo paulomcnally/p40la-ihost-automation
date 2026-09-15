@@ -1,0 +1,1 @@
+ALTER TABLE webhook_logs DROP COLUMN http_status;

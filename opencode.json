@@ -1,0 +1,25 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "instructions": ["AGENTS.md"],
+  "skills": {
+    "paths": [".opencode/skills"]
+  },
+  "command": {
+    "spec-create": {
+      "description": "Create a new technical specification with auto-incremented ID",
+      "template": "Use the spec-manager skill to create a new spec. Ask the user for the title/requirement, then: 1) Check docs/specs/README.md for the last ID used, 2) Create a new file in docs/specs/ using the next sequential ID (SPEC-XXX format), 3) Copy the template from docs/specs/templates/spec-template.md, 4) Research the requirement if needed, 5) Fill in the template with the requirement details, 6) Update docs/specs/README.md to add the new spec to the index and update counters, 7) Report back the created spec ID and summary. Remember iHost constraints: low memory, SQLite, minimal dependencies."
+    },
+    "spec-list": {
+      "description": "List all specs with optional status filter",
+      "template": "Read docs/specs/README.md and report the current status of all specs. If the user provided a status argument, filter by that status. Include the counter summary."
+    },
+    "spec-status": {
+      "description": "Update the status of a specific spec",
+      "template": "Update the status of a spec. Arguments: spec ID and new status. Steps: 1) Read the spec file from docs/specs/, 2) Validate the status transition is allowed (draft→pending_execution→in_progress→pending_release→released), 3) Update the frontmatter status in the spec file, 4) Update the status in docs/specs/README.md, 5) Add an entry to the spec's change history, 6) Confirm the update."
+    },
+    "spec-show": {
+      "description": "Show summary of a specific spec",
+      "template": "Read the spec file from docs/specs/ and provide a concise summary: ID, title, status, requirements, acceptance criteria, and current progress."
+    }
+  }
+}

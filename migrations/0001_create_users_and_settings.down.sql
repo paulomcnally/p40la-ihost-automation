@@ -1,0 +1,3 @@
+DROP INDEX IF EXISTS idx_users_email;
+DROP TABLE IF EXISTS settings;
+DROP TABLE IF EXISTS users;

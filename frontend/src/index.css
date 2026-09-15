@@ -1,0 +1,62 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-primary: 0 122 255;
+  --color-primary-hover: 0 86 179;
+  --color-danger: 255 59 48;
+  --color-success: 52 199 89;
+  --color-warning: 255 149 0;
+  --color-bg: 242 242 247;
+  --color-card: 255 255 255;
+  --color-border: 229 229 234;
+  --color-text-secondary: 108 108 112;
+  --color-text: 28 28 30;
+}
+
+.dark {
+  --color-primary: 10 132 255;
+  --color-primary-hover: 0 122 255;
+  --color-danger: 255 69 58;
+  --color-success: 48 209 88;
+  --color-warning: 255 159 10;
+  --color-bg: 0 0 0;
+  --color-card: 28 28 30;
+  --color-border: 44 44 46;
+  --color-text-secondary: 142 142 147;
+  --color-text: 242 242 247;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: rgb(var(--color-bg));
+  color: rgb(var(--color-text));
+}
+
+input,
+select,
+textarea {
+  color: rgb(var(--color-text));
+  background-color: rgb(var(--color-card));
+  color-scheme: light dark;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: rgb(var(--color-text-secondary));
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(100%); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.animate-slide-in {
+  animation: slideIn 0.3s ease-out;
+}

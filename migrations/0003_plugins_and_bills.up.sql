@@ -1,0 +1,27 @@
+CREATE TABLE IF NOT EXISTS plugins (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL UNIQUE,
+    version TEXT NOT NULL,
+    source TEXT NOT NULL,
+    description TEXT,
+    status TEXT NOT NULL DEFAULT 'active',
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+ALTER TABLE accounts ADD COLUMN plugin_name TEXT REFERENCES plugins(name);
+
+CREATE TABLE IF NOT EXISTS bills (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    account_id INTEGER NOT NULL REFERENCES accounts(id) ON DELETE CASCADE,
+    plugin_name TEXT NOT NULL,
+    plugin_version TEXT NOT NULL,
+    source TEXT NOT NULL,
+    status TEXT NOT NULL DEFAULT 'ok',
+    error TEXT,
+    raw TEXT NOT NULL,
+    fetched_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_bills_account_id ON bills(account_id);

@@ -1,0 +1,120 @@
+name: Build & Push Docker Image
+
+on:
+  push:
+    tags: ["v*"]
+
+env:
+  IMAGE_NAME: paulomcnally/p40la-ihost-automation
+
+jobs:
+  build:
+    runs-on: ${{ matrix.runs_on }}
+    strategy:
+      matrix:
+        platform:
+          - linux/amd64
+          - linux/arm/v7
+          - linux/arm64
+        include:
+          - platform: linux/amd64
+            tag_suffix: amd64
+            runs_on: ubuntu-latest
+            needs_qemu: "false"
+          - platform: linux/arm/v7
+            tag_suffix: armv7
+            runs_on: ubuntu-latest
+            needs_qemu: "true"
+          - platform: linux/arm64
+            tag_suffix: arm64
+            runs_on: ubuntu-24.04-arm
+            needs_qemu: "false"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Extract version from tag
+        id: version
+        run: |
+          TAG="${GITHUB_REF#refs/tags/v}"
+          echo "tag=${TAG}" >> $GITHUB_OUTPUT
+
+      - name: Set up QEMU
+        if: matrix.needs_qemu == 'true'
+        uses: docker/setup-qemu-action@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+        with:
+          driver-opts: |
+            image=moby/buildkit:latest
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v4
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          platforms: ${{ matrix.platform }}
+          push: true
+          load: false
+          tags: ${{ env.IMAGE_NAME }}:${{ steps.version.outputs.tag }}-${{ matrix.tag_suffix }}
+          cache-from: type=gha,scope=${{ matrix.tag_suffix }}
+          cache-to: type=gha,scope=${{ matrix.tag_suffix }},mode=max
+          provenance: false
+
+  merge:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Extract version from tag
+        id: version
+        run: |
+          TAG="${GITHUB_REF#refs/tags/v}"
+          echo "tag=${TAG}" >> $GITHUB_OUTPUT
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v4
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Wait and verify images
+        run: |
+          TAG="${{ steps.version.outputs.tag }}"
+          echo "Waiting for images to propagate..."
+          for i in 1 2 3 4 5 6; do
+            echo "Attempt $i/6..."
+            amd64=$(docker buildx imagetools inspect ${{ env.IMAGE_NAME }}:${TAG}-amd64 2>&1 | grep -c "Manifest" || true)
+            arm64=$(docker buildx imagetools inspect ${{ env.IMAGE_NAME }}:${TAG}-arm64 2>&1 | grep -c "Manifest" || true)
+            armv7=$(docker buildx imagetools inspect ${{ env.IMAGE_NAME }}:${TAG}-armv7 2>&1 | grep -c "Manifest" || true)
+            echo "amd64: $amd64, arm64: $arm64, armv7: $armv7"
+            if [ "$amd64" -gt 0 ] && [ "$arm64" -gt 0 ] && [ "$armv7" -gt 0 ]; then
+              echo "All images ready!"
+              break
+            fi
+            sleep 15
+          done
+
+      - name: Create multi-arch manifest
+        run: |
+          TAG="${{ steps.version.outputs.tag }}"
+          docker buildx imagetools create \
+            -t ${{ env.IMAGE_NAME }}:${TAG} \
+            -t ${{ env.IMAGE_NAME }}:latest \
+            ${{ env.IMAGE_NAME }}:${TAG}-amd64 \
+            ${{ env.IMAGE_NAME }}:${TAG}-armv7 \
+            ${{ env.IMAGE_NAME }}:${TAG}-arm64
+
+      - name: Verify manifest
+        run: |
+          TAG="${{ steps.version.outputs.tag }}"
+          docker buildx imagetools inspect ${{ env.IMAGE_NAME }}:${TAG}
+          docker buildx imagetools inspect ${{ env.IMAGE_NAME }}:latest
