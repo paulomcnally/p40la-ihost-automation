@@ -10,10 +10,19 @@ RUN npm run build
 
 # Stage 2: Build backend (Go)
 FROM golang:1.26-alpine AS backend-builder
+RUN apk add --no-cache git
 WORKDIR /app
 
+# El módulo de plugins es privado (SPEC-015): hay que pasar un token con
+# acceso de lectura via BuildKit secret (nunca ARG/ENV).
+ENV GOPRIVATE=github.com/paulomcnally/p40la-ihost-automation-plugins
+
 COPY go.mod go.sum ./
-RUN go mod download
+RUN --mount=type=secret,id=gh_token \
+    GIT_CONFIG_COUNT=1 \
+    GIT_CONFIG_KEY_0=url.https://x-access-token:$(cat /run/secrets/gh_token)@github.com/.insteadOf \
+    GIT_CONFIG_VALUE_0=https://github.com/ \
+    go mod download
 
 COPY . .
 

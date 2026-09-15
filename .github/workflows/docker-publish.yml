@@ -66,6 +66,8 @@ jobs:
           cache-from: type=gha,scope=${{ matrix.tag_suffix }}
           cache-to: type=gha,scope=${{ matrix.tag_suffix }},mode=max
           provenance: false
+          secrets: |
+            gh_token=${{ secrets.PLUGINS_TOKEN }}
 
   merge:
     runs-on: ubuntu-latest

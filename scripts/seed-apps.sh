@@ -14,17 +14,18 @@
 #   IDENTIFIERS    lista de identificadores (default: "0000000")
 #   PLUGIN_NAME    plugin a registrar/asociar (default: "claro.nicaragua")
 #   PLUGIN_VERSION versión del plugin (default: "1.2.0")
-#   PLUGIN_SOURCE  fuente del plugin (default: "https://<DOMINIO_CLARO_API>")
+#   PLUGIN_SOURCE  fuente del plugin (OBLIGATORIA; los dominios reales no viven
+#                  en este repo, ver SPEC-015)
 #
-# Ejemplo DISNORTE-DISSUR (credenciales por entorno, nunca hardcodeadas):
+# Ejemplo DISNORTE-DISSUR (credenciales y fuente por entorno, nunca hardcodeadas):
 #   PLUGIN_NAME=disnorte.dissur.nicaragua PLUGIN_VERSION=1.0.0 \
-#   PLUGIN_SOURCE=https://<DOMINIO_DISNORTE> \
+#   PLUGIN_SOURCE="https://<URL_DEL_PROVEEDOR>" \
 #   APP_NAME="DISNORTE-DISSUR Nicaragua" IDENTIFIERS=0000000 \
 #   CREDENTIALS='{"pin":"<PIN>"}' ./scripts/seed-apps.sh
 #
-# Ejemplo ASSA (credenciales por entorno, nunca hardcodeadas):
+# Ejemplo ASSA (credenciales y fuente por entorno, nunca hardcodeadas):
 #   PLUGIN_NAME=assa.nicaragua PLUGIN_VERSION=1.0.0 \
-#   PLUGIN_SOURCE=https://<DOMINIO_ASSA> \
+#   PLUGIN_SOURCE="https://<URL_DEL_PROVEEDOR>" \
 #   APP_NAME="ASSA Nicaragua" IDENTIFIERS=<POLIZA> \
 #   CREDENTIALS='{"username":"<USUARIO>","password":"<CLAVE>"}' ./scripts/seed-apps.sh
 #
@@ -38,12 +39,16 @@ ROOT_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
 DB_PATH="${DB_PATH:-${ROOT_DIR}/data/app.db}"
 APP_NAME="${APP_NAME:-Claro Nicaragua}"
 if [[ -z "${CREDENTIALS:-}" ]]; then
-  CREDENTIALS='{"username":"demo@claro.ni","password":"demo1234"}'
+  CREDENTIALS='{"username":"demo@example.com","password":"demo1234"}'
 fi
 IDENTIFIERS="${IDENTIFIERS:-0000000}"
 PLUGIN_NAME="${PLUGIN_NAME:-claro.nicaragua}"
 PLUGIN_VERSION="${PLUGIN_VERSION:-1.2.0}"
-PLUGIN_SOURCE="${PLUGIN_SOURCE:-https://<DOMINIO_CLARO_API>}"
+if [[ -z "${PLUGIN_SOURCE:-}" ]]; then
+  echo "ERROR: PLUGIN_SOURCE es obligatorio (ej. https://<URL_DEL_PROVEEDOR>)." >&2
+  echo "Los dominios reales no viven en este repo (ver SPEC-015)." >&2
+  exit 1
+fi
 PLUGIN_DESCRIPTION="${PLUGIN_DESCRIPTION:-}"
 if [[ -z "${PLUGIN_DESCRIPTION}" ]]; then
   case "${PLUGIN_NAME}" in

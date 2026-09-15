@@ -6,14 +6,14 @@ Este directorio contiene todas las especificaciones técnicas del proyecto `p40l
 
 | Métrica | Valor |
 |---------|-------|
-| **Total de specs** | 14 |
+| **Total de specs** | 15 |
 | **En draft** | 0 🟡 |
 | **Pending execution** | 0 🔵 |
 | **In progress** | 0 🟣 |
 | **Pending release** | 0 🟠 |
-| **Released** | 13 🟢 |
+| **Released** | 14 🟢 |
 | **Canceladas** | 1 ⚫ |
-| **Último ID usado** | SPEC-014 |
+| **Último ID usado** | SPEC-015 |
 
 ---
 
@@ -21,6 +21,7 @@ Este directorio contiene todas las especificaciones técnicas del proyecto `p40l
 
 | ID | Título | Estado | Fecha Creación | Autor |
 |----|--------|--------|----------------|-------|
+| SPEC-015 | Plugins en módulo privado con dominios ofuscados | released | 2026-09-15 | paulomcnally |
 | SPEC-014 | Plugin assa.nicaragua: autenticación, pólizas y facturas | released | 2026-09-14 | paulomcnally |
 | SPEC-013 | Selector de plugin en creación de cuenta + formulario dinámico de credenciales | released | 2026-09-13 | paulomcnally |
 | SPEC-012 | Plugin enacal.nicaragua: autenticación y facturas | released | 2026-09-12 | paulomcnally |
@@ -103,6 +104,8 @@ docs/specs/
 ```
 
 ---
+
+*Última actualización de este tracker: 2026-09-15 — SPEC-015 (Plugins en módulo privado con dominios ofuscados) **released**: contrato + 5 implementaciones movidos al repo privado `p40la-ihost-automation-plugins` v1.0.0 (dominios cifrados AES-256-GCM vía `secret.Must`/`cmd/gensecret`, `all.RegisterAll`, CI propio); repo público con aliases en `internal/plugins`, `main.go` con `pluginall.RegisterAll`, Dockerfile con BuildKit secret `gh_token` + `git` en builder, workflow con `secrets.PLUGINS_TOKEN`, compose con `.gh_token`, `seed-apps.sh` exige `PLUGIN_SOURCE`, `tigo-auth.sh` movido al privado, reglas en AGENTS.md. Verificado: build/test OK, `strings` del binario sin dominios, imagen Docker con secret OK. Issue #16 cerrado.
 
 *Última actualización de este tracker: 2026-09-15 — SPEC-014 (Plugin assa.nicaragua: autenticación, pólizas y facturas) **released** (cerrada por decisión del usuario; el deploy a iHost lo realiza él): plugin `assa.nicaragua` v1.0.0 (`internal/plugins/assa/nicaragua/`), login sin captcha (`POST login_v.aspx` con orden exacto `txt_Usuario`→`txt_Clave`→`botonLoginAux`→`TipoDispotivivo`, sin `tokenCaptcha`; 302 + `.ASPXAUTH` + `var`), pólizas con `Tipo=` vacío (`Consulta_Polizas.aspx`, grid embebido), facturas vía `Unidades.aspx` (polifacturas PENDIENTE + recibos pagados = toda la data de facturación) → webhook `{year, month, amount, status, invoice_number}` con `Raw["invoice_number"]`. Registrado en `main.go`, seed en `seed-apps.sh`, cuenta real (póliza `02B000000`) en SQLite local. Verificado end-to-end contra la API real (6 facturas: 2 pending + 4 paid). Cero migraciones/deps. Issue #15 cerrado.
 

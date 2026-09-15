@@ -21,6 +21,14 @@ Los módulos/menús se agregan incrementalmente a pedido del usuario.
   ```bash
   go run ./cmd/server
   ```
+- **Requisito previo (SPEC-015)**: los plugins viven en el repo privado
+  `github.com/paulomcnally/p40la-ihost-automation-plugins`. Para compilar hace falta:
+  ```bash
+  go env -w GOPRIVATE=github.com/paulomcnally/p40la-ihost-automation-plugins
+  gh auth setup-git   # o PAT con scope repo via git credential helper
+  ```
+  Si `go build` falla con "no required module provides package ...-plugins", es
+  por falta de credenciales o `GOPRIVATE`, no por el código.
 - Frontend:
   ```bash
   cd frontend && npm install && npm run dev
@@ -29,6 +37,7 @@ Los módulos/menús se agregan incrementalmente a pedido del usuario.
   ```bash
   ./scripts/create-test-user.sh && ./scripts/seed-apps.sh
   ```
+  `seed-apps.sh` exige `PLUGIN_SOURCE` por entorno (los dominios no viven en este repo).
 - Build de producción del frontend (vuelca a `../public`):
   ```bash
   cd frontend && npm run build
@@ -40,6 +49,7 @@ Los módulos/menús se agregan incrementalmente a pedido del usuario.
   ```
 - Docker:
   ```bash
+  gh auth token > .gh_token    # requisito (SPEC-015): el build usa este token para bajar el módulo privado
   docker compose up --build     # build + levantar
   ```
 
@@ -57,12 +67,63 @@ Los módulos/menús se agregan incrementalmente a pedido del usuario.
 
 ## Estructura
 
-- `cmd/server/main.go` — entrypoint del backend Go.
-- `internal/` — `api` (handlers/routes), `config`, `db` (SQLite + migraciones), `models`, `services`, `storage`.
+- `cmd/server/main.go` — entrypoint del backend Go (registra plugins vía `pluginall.RegisterAll` del módulo privado).
+- `internal/` — `api` (handlers/routes), `config`, `db` (SQLite + migraciones), `models`, `services`, `storage`; `plugins` es solo un re-export (aliases) del contrato del módulo privado.
 - `frontend/` — SPA React: `src/pages`, `src/components`, `src/stores`, `src/api`, `src/i18n`.
 - `migrations/` — archivos `.up.sql` / `.down.sql` numerados.
 - `scripts/` — build, release, dev y test.
 - `public/` — output del build de Vite (gitignored, lo genera `npm run build`).
+
+## Plugins de integración (módulo privado) — REGLAS OBLIGATORIAS
+
+Las implementaciones de plugins (contrato + integraciones + dominios) viven en
+el repo **privado** `github.com/paulomcnally/p40la-ihost-automation-plugins`
+(SPEC-015). Este repo público **no debe contener** dominios ni know-how de
+proveedores.
+
+### Al agregar un plugin nuevo (o tocar uno existente)
+
+1. El trabajo se hace en el **repo privado**, no en este. El contrato está en
+   `plugins/` (módulo privado); este repo solo re-exporta aliases en
+   `internal/plugins/plugins.go`.
+2. **Todo literal de dominio/URL de proveedor DEBE ir cifrado** con
+   `secret.Must`, nunca en claro (aplica a código de producción y a scripts;
+   en tests del repo privado se permite el valor claro, pero es preferible
+   `secret.Must`):
+   ```bash
+   # en el repo privado
+   go run ./cmd/gensecret 'https://proveedor.ejemplo/ruta'   # emite el blob
+   ```
+   La llave vive partida en `secret/key.go` del repo privado; no tocarla.
+3. La nueva implementación se registra en `all/register.go` del repo privado.
+   **No** se agrega ningún import de implementación en `cmd/server/main.go`
+   (este repo usa solo `pluginall.RegisterAll`).
+4. Al terminar: tag semver en el repo privado (`git tag vX.Y.Z`) y actualizar
+   `go.mod`/`go.sum` de este repo (`go get ...-plugins@vX.Y.Z`). Nunca usar
+   pseudo-versiones de rama.
+5. `scripts/tigo-auth.sh` y otros scripts que toquen dominios/clientes viven en
+   el repo privado; aquí solo `seed-apps.sh` con `PLUGIN_SOURCE` obligatoria.
+
+### Build, CI y secretos
+
+- Local: `go env -w GOPRIVATE=github.com/paulomcnally/p40la-ihost-automation-plugins`
+  + `gh auth setup-git` (o PAT con scope `repo`).
+- Docker (`Dockerfile`): el token se pasa con `--mount=type=secret,id=gh_token`
+  en `go mod download`. **Nunca** en `ARG`/`ENV` (quedaría en capas/historial).
+- CI (`docker-publish.yml`): `secrets.PLUGINS_TOKEN` (PAT con lectura del repo
+  privado) via `secrets:` del `docker/build-push-action`.
+- **Prohibido** `go mod vendor` en este repo: copiaría el código privado al
+  repo público.
+- El stage builder de Go necesita `git` (lo agrega el Dockerfile) porque los
+  módulos `GOPRIVATE` se bajan por VCS directo.
+
+### Verificación tras tocar plugins
+
+```bash
+go build ./... && go test ./...
+go build -o /tmp/server-check ./cmd/server && strings /tmp/server-check | rg -i 'proveedor'   # sin salidas en claro
+rg -i 'proveedor' -g '!docs/specs/**' .   # sin salidas (docs/specs conserva dominios por decisión, ADR-004)
+```
 
 ## Backend: agregar un módulo
 

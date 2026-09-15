@@ -14,13 +14,9 @@ import (
 	"github.com/paulomcnally/p40la-ihost-automation/internal/config"
 	"github.com/paulomcnally/p40la-ihost-automation/internal/db"
 	"github.com/paulomcnally/p40la-ihost-automation/internal/plugins"
-	assanicaragua "github.com/paulomcnally/p40la-ihost-automation/internal/plugins/assa/nicaragua"
-	"github.com/paulomcnally/p40la-ihost-automation/internal/plugins/claro/nicaragua"
-	disnortedissur "github.com/paulomcnally/p40la-ihost-automation/internal/plugins/disnorte/dissur/nicaragua"
-	enacalnicaragua "github.com/paulomcnally/p40la-ihost-automation/internal/plugins/enacal/nicaragua"
-	tigonicaragua "github.com/paulomcnally/p40la-ihost-automation/internal/plugins/tigo/nicaragua"
 	"github.com/paulomcnally/p40la-ihost-automation/internal/services"
 	"github.com/paulomcnally/p40la-ihost-automation/internal/storage"
+	pluginall "github.com/paulomcnally/p40la-ihost-automation-plugins/all"
 )
 
 func main() {
@@ -77,11 +73,7 @@ func main() {
 	appsService := services.NewAppsService(appsStorage, pluginsStorage)
 
 	registry := plugins.NewRegistry()
-	registry.Register(nicaragua.New())
-	registry.Register(tigonicaragua.New())
-	registry.Register(disnortedissur.New())
-	registry.Register(enacalnicaragua.New())
-	registry.Register(assanicaragua.New())
+	pluginall.RegisterAll(registry)
 
 	billsService := services.NewBillsService(appsService, registry, pluginsStorage)
 	if err := billsService.SyncCatalog(context.Background()); err != nil {

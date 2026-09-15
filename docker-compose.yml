@@ -1,6 +1,9 @@
 services:
   p40la-ihost-automation:
-    build: .
+    build:
+      context: .
+      secrets:
+        - gh_token
     image: paulomcnally/p40la-ihost-automation:latest
     container_name: p40la-ihost-automation
     restart: unless-stopped
@@ -16,3 +19,9 @@ services:
 
 volumes:
   p40la-ihost-automation-data:
+
+# Token con lectura del repo privado de plugins (SPEC-015). Creá el archivo
+# .gh_token con:  gh auth token > .gh_token
+secrets:
+  gh_token:
+    file: .gh_token

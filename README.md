@@ -45,6 +45,15 @@ docker buildx imagetools inspect paulomcnally/p40la-ihost-automation:$VERSION
 
 ## Desarrollo local
 
+> **Requisito (SPEC-015):** las implementaciones de plugins viven en el repo
+> privado `github.com/paulomcnally/p40la-ihost-automation-plugins`. Para que el
+> backend compile necesitás acceso a ese repo:
+>
+> ```bash
+> go env -w GOPRIVATE=github.com/paulomcnally/p40la-ihost-automation-plugins
+> gh auth setup-git    # o un PAT con scope repo via git credential helper
+> ```
+
 ```bash
 # Backend (puerto 8089 para no chocar con el proyecto p40la-ihost en 8088)
 go run ./cmd/server
