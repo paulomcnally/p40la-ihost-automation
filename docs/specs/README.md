@@ -6,14 +6,14 @@ Este directorio contiene todas las especificaciones técnicas del proyecto `p40l
 
 | Métrica | Valor |
 |---------|-------|
-| **Total de specs** | 15 |
+| **Total de specs** | 16 |
 | **En draft** | 0 🟡 |
 | **Pending execution** | 0 🔵 |
 | **In progress** | 0 🟣 |
 | **Pending release** | 0 🟠 |
 | **Released** | 14 🟢 |
-| **Canceladas** | 1 ⚫ |
-| **Último ID usado** | SPEC-015 |
+| **Canceladas** | 2 ⚫ |
+| **Último ID usado** |  |
 
 ---
 
@@ -21,6 +21,7 @@ Este directorio contiene todas las especificaciones técnicas del proyecto `p40l
 
 | ID | Título | Estado | Fecha Creación | Autor |
 |----|--------|--------|----------------|-------|
+|  | Redacción de dominios en docs y purga de historial git | cancelled | 2026-09-15 | paulomcnally |
 | SPEC-015 | Plugins en módulo privado con dominios ofuscados | released | 2026-09-15 | paulomcnally |
 | SPEC-014 | Plugin assa.nicaragua: autenticación, pólizas y facturas | released | 2026-09-14 | paulomcnally |
 | SPEC-013 | Selector de plugin en creación de cuenta + formulario dinámico de credenciales | released | 2026-09-13 | paulomcnally |
