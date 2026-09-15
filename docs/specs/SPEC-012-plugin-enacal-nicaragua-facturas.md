@@ -161,7 +161,7 @@ Safari/604.1`, `Referer: https://<DOMINIO_ENACAL>/soe/`, `Origin: https://<DOMIN
 | Token manual / sesión persistente | Simple de implementar | La API no devuelve token (respuesta `{"success":true}`) | ❌ Rechazada |
 | Cookie `repository` del portal (localStorage→cookie) | Replica exacta del navegador | Es una cookie de la SPA, no un mecanismo de la API; el plugin ya reconstruye el Basic | ❌ Rechazada (no necesario) |
 | Usar `pagos/` para derivar estado | Datos de pago explícitos | `facturas/` ya trae `Pendiente` y `Pagado_Por`; una llamada menos | ❌ Rechazada (facturas es suficiente) |
-| Descargar el PDF en el MVP | Adjunto completo de la factura | Host distinto (`wse.`) + costo de descarga/almacenamiento; el receptor aún no lo soporta | ❌ Rechazada para el MVP (documentado en REQ-011) |
+| Descargar el PDF en el MVP | Adjunto completo de la factura | Host distinto (subdominio dedicado) + costo de descarga/almacenamiento; el receptor aún no lo soporta | ❌ Rechazada para el MVP (documentado en REQ-011) |
 | Migración/schema nuevo para ENACAL | ... | Reusa todo lo existente | ❌ Rechazada (cero migraciones) |
 
 ### 3.3 Decisiones arquitectónicas (ADRs)
