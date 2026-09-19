@@ -241,7 +241,32 @@ func buildWebhookPayload(b BillPayload) (map[string]any, error) {
 	if invoice := extractInvoiceNumber(b.Raw); invoice != "" {
 		payload["invoice_number"] = invoice
 	}
+	// issue_date/due_date (SPEC-016): solo si el plugin los obtuvo y son una
+	// fecha YYYY-MM-DD válida. Nunca placeholders ni fechas cero.
+	if issue := isoDateOnly(b.IssueDate); issue != "" {
+		payload["issue_date"] = issue
+	}
+	if due := isoDateOnly(b.DueDate); due != "" {
+		payload["due_date"] = due
+	}
 	return payload, nil
+}
+
+// isoDateOnly valida y normaliza una fecha a YYYY-MM-DD. Devuelve "" si el
+// valor no es una fecha válida (o es un placeholder tipo "0001-01-01").
+func isoDateOnly(s string) string {
+	s = strings.TrimSpace(s)
+	if s == "" {
+		return ""
+	}
+	t, err := time.Parse("2006-01-02", s)
+	if err != nil {
+		return ""
+	}
+	if t.Year() < 1900 || t.Year() > 2100 {
+		return ""
+	}
+	return t.Format("2006-01-02")
 }
 
 // extractInvoiceNumber obtiene el número de factura limpio del raw de un bill.

@@ -6,14 +6,14 @@ Este directorio contiene todas las especificaciones técnicas del proyecto `p40l
 
 | Métrica | Valor |
 |---------|-------|
-| **Total de specs** | 15 |
+| **Total de specs** | 16 |
 | **En draft** | 0 🟡 |
 | **Pending execution** | 0 🔵 |
 | **In progress** | 0 🟣 |
 | **Pending release** | 0 🟠 |
-| **Released** | 14 🟢 |
+| **Released** | 15 🟢 |
 | **Canceladas** | 1 ⚫ |
-| **Último ID usado** | SPEC-015 |
+| **Último ID usado** | SPEC-016 |
 
 ---
 
@@ -21,6 +21,7 @@ Este directorio contiene todas las especificaciones técnicas del proyecto `p40l
 
 | ID | Título | Estado | Fecha Creación | Autor |
 |----|--------|--------|----------------|-------|
+| SPEC-016 | issue_date y due_date en webhook por plugin | released | 2026-09-19 | paulomcnally |
 | SPEC-015 | Plugins en módulo privado con dominios ofuscados | released | 2026-09-15 | paulomcnally |
 | SPEC-014 | Plugin assa.nicaragua: autenticación, pólizas y facturas | released | 2026-09-14 | paulomcnally |
 | SPEC-013 | Selector de plugin en creación de cuenta + formulario dinámico de credenciales | released | 2026-09-13 | paulomcnally |
@@ -104,6 +105,8 @@ docs/specs/
 ```
 
 ---
+
+*Última actualización de este tracker: 2026-09-19 — SPEC-016 (issue_date y due_date en webhook por plugin) **released**: el contrato de webhooks de p40la-ihost (docs/webhooks-api.md v1.2, SPEC-081) agregó `issue_date` (emisión) y `due_date` (vencimiento) opcionales; este repo debe enviarlos por plugin solo cuando la API externa los expone. Investigación completada: claro ✅✅ (`fechaEmision`/`fechaVencimiento`), enacal ✅✅ (`Emision`/`Vence` DD/MM/YYYY), tigo ✅`dueDate - 1 mes + 1 día` (emisión = día 20 del mes anterior)/✅`dueDate`, disnorte ✅`FechaRecibo`/✅ +20 días (regla de negocio confirmada por el usuario; la API devuelve 0001-01-01), assa ✅`FECHA`/✅`VENCIMIENTO` en polifacturas y ✅`MES_PAGADO`/✅`MES_PAGADO` (fecha de vencimiento según el portal; emisión = vencimiento por regla del usuario) en recibos. Diseño: campo `IssueDate` en contrato `plugins.Bill` (repo privado, tag semver) + `BillPayload`/`buildWebhookPayload` condicionales en este repo; cero migraciones. Issue #18 abierto.
 
 *Última actualización de este tracker: 2026-09-15 — SPEC-015 (Plugins en módulo privado con dominios ofuscados) **released**: contrato + 5 implementaciones movidos al repo privado `p40la-ihost-automation-plugins` v1.0.0 (dominios cifrados AES-256-GCM vía `secret.Must`/`cmd/gensecret`, `all.RegisterAll`, CI propio); repo público con aliases en `internal/plugins`, `main.go` con `pluginall.RegisterAll`, Dockerfile con BuildKit secret `gh_token` + `git` en builder, workflow con `secrets.PLUGINS_TOKEN`, compose con `.gh_token`, `seed-apps.sh` exige `PLUGIN_SOURCE`, `tigo-auth.sh` movido al privado, reglas en AGENTS.md. Verificado: build/test OK, `strings` del binario sin dominios, imagen Docker con secret OK. Issue #16 cerrado.
 

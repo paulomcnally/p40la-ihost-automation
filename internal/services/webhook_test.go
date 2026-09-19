@@ -65,10 +65,12 @@ func TestBuildWebhookPayloadTigo(t *testing.T) {
 
 func TestBuildWebhookPayloadClaro(t *testing.T) {
 	b := BillPayload{
-		Period: "03-03-2026",
-		Amount: "1234.56",
-		Status: "pending",
-		Raw:    map[string]any{"numFactura": "INV-2026-03"},
+		Period:    "03-03-2026",
+		Amount:    "1234.56",
+		Status:    "pending",
+		IssueDate: "2026-03-03",
+		DueDate:   "2026-04-02",
+		Raw:       map[string]any{"numFactura": "INV-2026-03"},
 	}
 	payload, err := buildWebhookPayload(b)
 	if err != nil {
@@ -83,6 +85,12 @@ func TestBuildWebhookPayloadClaro(t *testing.T) {
 	if payload["invoice_number"] != "INV-2026-03" {
 		t.Errorf("invoice_number = %v", payload["invoice_number"])
 	}
+	if payload["issue_date"] != "2026-03-03" {
+		t.Errorf("issue_date = %v, want 2026-03-03", payload["issue_date"])
+	}
+	if payload["due_date"] != "2026-04-02" {
+		t.Errorf("due_date = %v, want 2026-04-02", payload["due_date"])
+	}
 }
 
 func TestBuildWebhookPayloadPeriodoInvalido(t *testing.T) {
@@ -92,53 +100,119 @@ func TestBuildWebhookPayloadPeriodoInvalido(t *testing.T) {
 	}
 }
 
+// CA-003: DISNORTE envía issue_date = FechaRecibo y due_date = +20 días.
 func TestBuildWebhookPayloadDisnorte(t *testing.T) {
 	b := BillPayload{
-		Period: "2026-08",
-		Amount: "60.66",
-		Status: "paid",
-		Raw:    map[string]any{"numFactura": "F122000000000001"},
+		Period:    "2026-08",
+		Amount:    "60.66",
+		Status:    "paid",
+		IssueDate: "2026-08-19",
+		DueDate:   "2026-09-08",
+		Raw:       map[string]any{"numFactura": "F122000000000001"},
 	}
 	payload, err := buildWebhookPayload(b)
 	if err != nil {
 		t.Fatalf("buildWebhookPayload: %v", err)
 	}
-	if payload["year"] != 2026 || payload["month"] != 8 {
-		t.Errorf("year/month = %v/%v, want 2026/8", payload["year"], payload["month"])
+	if payload["issue_date"] != "2026-08-19" {
+		t.Errorf("issue_date = %v, want 2026-08-19", payload["issue_date"])
 	}
-	if payload["amount"] != 60.66 {
-		t.Errorf("amount = %v, want 60.66", payload["amount"])
-	}
-	if payload["status"] != "paid" {
-		t.Errorf("status = %v", payload["status"])
+	if payload["due_date"] != "2026-09-08" {
+		t.Errorf("due_date = %v, want 2026-09-08 (FechaRecibo + 20 días)", payload["due_date"])
 	}
 	if payload["invoice_number"] != "F122000000000001" {
 		t.Errorf("invoice_number = %v", payload["invoice_number"])
 	}
 }
 
+// CA-002: ENACAL envía ambos campos normalizados.
 func TestBuildWebhookPayloadEnacal(t *testing.T) {
 	b := BillPayload{
-		Period: "2026-08",
-		Amount: "28.19",
-		Status: "pending",
-		Raw:    map[string]any{"numFactura": "FAC-000000001"},
+		Period:    "2026-08",
+		Amount:    "28.19",
+		Status:    "pending",
+		IssueDate: "2026-08-29",
+		DueDate:   "2026-09-20",
+		Raw:       map[string]any{"numFactura": "FAC-000000001"},
 	}
 	payload, err := buildWebhookPayload(b)
 	if err != nil {
 		t.Fatalf("buildWebhookPayload: %v", err)
 	}
-	if payload["year"] != 2026 || payload["month"] != 8 {
-		t.Errorf("year/month = %v/%v, want 2026/8", payload["year"], payload["month"])
+	if payload["issue_date"] != "2026-08-29" {
+		t.Errorf("issue_date = %v, want 2026-08-29", payload["issue_date"])
 	}
-	if payload["amount"] != 28.19 {
-		t.Errorf("amount = %v, want 28.19", payload["amount"])
-	}
-	if payload["status"] != "pending" {
-		t.Errorf("status = %v", payload["status"])
+	if payload["due_date"] != "2026-09-20" {
+		t.Errorf("due_date = %v, want 2026-09-20", payload["due_date"])
 	}
 	if payload["invoice_number"] != "FAC-000000001" {
 		t.Errorf("invoice_number = %v", payload["invoice_number"])
+	}
+}
+
+// CA-004: Tigo envía due_date y NO issue_date cuando falta.
+func TestBuildWebhookPayloadTigoSinIssue(t *testing.T) {
+	b := BillPayload{
+		Period:  "2026-08",
+		Amount:  "700.46",
+		Status:  "pending",
+		DueDate: "2026-09-19",
+		Raw:     map[string]any{"invoiceId": "MSDFC-31369430"},
+	}
+	payload, err := buildWebhookPayload(b)
+	if err != nil {
+		t.Fatalf("buildWebhookPayload: %v", err)
+	}
+	if payload["due_date"] != "2026-09-19" {
+		t.Errorf("due_date = %v, want 2026-09-19", payload["due_date"])
+	}
+	if _, ok := payload["issue_date"]; ok {
+		t.Error("issue_date no debe enviarse si el plugin no lo expone")
+	}
+}
+
+// CA-006: placeholders y fechas inválidas nunca se envían.
+func TestBuildWebhookPayloadOmiteFechasInvalidas(t *testing.T) {
+	cases := []BillPayload{
+		{Period: "2026-08", Amount: "10", Status: "paid", DueDate: "0001-01-01"},
+		{Period: "2026-08", Amount: "10", Status: "paid", IssueDate: "basura"},
+		{Period: "2026-08", Amount: "10", Status: "paid", DueDate: "2026-08-19T00:00:00"},
+	}
+	for i, b := range cases {
+		payload, err := buildWebhookPayload(b)
+		if err != nil {
+			t.Fatalf("caso %d: buildWebhookPayload: %v", i, err)
+		}
+		if _, ok := payload["issue_date"]; ok {
+			t.Errorf("caso %d: issue_date no debe enviarse (%v)", i, payload["issue_date"])
+		}
+		if _, ok := payload["due_date"]; ok {
+			t.Errorf("caso %d: due_date no debe enviarse (%v)", i, payload["due_date"])
+		}
+	}
+}
+
+// CA-007: formato inválido no rompe el job, omite el campo y sigue.
+func TestBuildWebhookPayloadFechaInvalidaNoFalla(t *testing.T) {
+	b := BillPayload{
+		Period:    "2026-08",
+		Amount:    "60.66",
+		Status:    "paid",
+		IssueDate: "no-es-fecha",
+		DueDate:   "2026-09-08",
+	}
+	payload, err := buildWebhookPayload(b)
+	if err != nil {
+		t.Fatalf("buildWebhookPayload: %v", err)
+	}
+	if _, ok := payload["issue_date"]; ok {
+		t.Error("issue_date inválido no debe enviarse")
+	}
+	if payload["due_date"] != "2026-09-08" {
+		t.Errorf("due_date = %v, want 2026-09-08 (los demás campos siguen)", payload["due_date"])
+	}
+	if payload["amount"] != 60.66 {
+		t.Errorf("amount = %v, want 60.66", payload["amount"])
 	}
 }
 

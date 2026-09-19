@@ -23,6 +23,7 @@ type BillPayload struct {
 	Period        string         `json:"period"`
 	Amount        string         `json:"amount"`
 	DueDate       string         `json:"due_date"`
+	IssueDate     string         `json:"issue_date"`
 	Status        string         `json:"status"`
 	InvoiceNumber string         `json:"invoice_number,omitempty"`
 	Raw           map[string]any `json:"raw,omitempty"`
@@ -146,6 +147,7 @@ func (s *BillsService) FetchBills(ctx context.Context, accountID int64) (*models
 			Period:        b.Period,
 			Amount:        b.Amount,
 			DueDate:       b.DueDate,
+			IssueDate:     b.IssueDate,
 			Status:        b.Status,
 			InvoiceNumber: extractInvoiceNumber(b.Raw),
 			Raw:           b.Raw,
