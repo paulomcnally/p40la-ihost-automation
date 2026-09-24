@@ -15,7 +15,7 @@ services:
       - PORT=8089
       - DATA_DIR=/app/data
       - LOG_LEVEL=info
-      - VERSION=0.1.9
+      - VERSION=0.1.10
 
 volumes:
   p40la-ihost-automation-data:
