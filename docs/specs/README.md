@@ -6,14 +6,14 @@ Este directorio contiene todas las especificaciones técnicas del proyecto `p40l
 
 | Métrica | Valor |
 |---------|-------|
-| **Total de specs** | 16 |
+| **Total de specs** | 17 |
 | **En draft** | 0 🟡 |
 | **Pending execution** | 0 🔵 |
 | **In progress** | 0 🟣 |
 | **Pending release** | 0 🟠 |
-| **Released** | 15 🟢 |
+| **Released** | 16 🟢 |
 | **Canceladas** | 1 ⚫ |
-| **Último ID usado** | SPEC-016 |
+| **Último ID usado** | SPEC-017 |
 
 ---
 
@@ -21,6 +21,7 @@ Este directorio contiene todas las especificaciones técnicas del proyecto `p40l
 
 | ID | Título | Estado | Fecha Creación | Autor |
 |----|--------|--------|----------------|-------|
+| SPEC-017 | Endpoint de run manual de webhook por cuenta (webhook:run) con auth por token | released | 2026-09-24 | opencode |
 | SPEC-016 | issue_date y due_date en webhook por plugin | released | 2026-09-19 | paulomcnally |
 | SPEC-015 | Plugins en módulo privado con dominios ofuscados | released | 2026-09-15 | paulomcnally |
 | SPEC-014 | Plugin assa.nicaragua: autenticación, pólizas y facturas | released | 2026-09-14 | paulomcnally |

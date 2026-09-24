@@ -1,7 +1,7 @@
 ---
 title: "Endpoint de run manual de webhook por cuenta (webhook:run) con auth por token"
 id: "SPEC-017"
-status: "in_progress"
+status: "released"
 author: "opencode"
 created: "2026-09-24"
 updated: "2026-09-24"
@@ -11,7 +11,7 @@ github_issue: 19
 # Endpoint de run manual de webhook por cuenta (webhook:run) con auth por token
 
 **ID**: SPEC-017  
-**Estado**: in_progress  
+**Estado**: released  
 **Autor**: opencode  
 **Creado**: 2026-09-24  
 **Actualizado**: 2026-09-24
@@ -133,3 +133,5 @@ Esta spec agrega **`POST /api/accounts/{accountId}/webhook:run`**: el mismo job 
 | Fecha | Autor | Descripción |
 |-------|-------|-------------|
 | 2026-09-24 | opencode | Creación inicial de la especificación |
+| 2026-09-24 | opencode | Implementación: handler `RunWebhook` (auth por token `X-Webhook-Key` con `crypto/subtle`), ruta `POST /api/accounts/{accountId}/webhook:run` fuera de `AuthMiddleware`, tests (`webhook_run_handlers_test.go`). Validación local E2E OK (200 `{delivered,failed}`, 401 sin header/key incorrecta, 400 errores de dominio). Commit `a2c8ea0` en rama `feature/SPEC-017-webhook-run`. |
+| 2026-09-24 | opencode | **Release**: merge a main, versión 0.1.10, issue #19 cerrado. Consumido por SPEC-092 del repo `p40la-ihost` (sincronización manual de servicios). |
