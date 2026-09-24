@@ -1,6 +1,7 @@
 package api
 
 import (
+	"crypto/subtle"
 	"encoding/json"
 	"errors"
 	"net/http"
@@ -163,6 +164,34 @@ func (h *WebhookHandlers) TestWebhook(w http.ResponseWriter, r *http.Request) {
 	accountID, ok := parseID(r, "accountId")
 	if !ok {
 		respondError(w, http.StatusBadRequest, "invalid_request", "ID inválido")
+		return
+	}
+	delivered, failed, err := h.service.RunJob(r.Context(), accountID)
+	if err != nil {
+		mapWebhookError(w, err)
+		return
+	}
+	respondJSON(w, http.StatusOK, map[string]int{"delivered": delivered, "failed": failed})
+}
+
+// RunWebhook ejecuta el job de una cuenta autenticado por token server-to-server
+// (SPEC-017). Valida el header X-Webhook-Key contra la api_key de webhooks del
+// propio automation. Es la vía que usa p40la-ihost (SPEC-092) para sincronizar
+// un servicio de forma manual, sin requerir sesión.
+func (h *WebhookHandlers) RunWebhook(w http.ResponseWriter, r *http.Request) {
+	accountID, ok := parseID(r, "accountId")
+	if !ok {
+		respondError(w, http.StatusBadRequest, "invalid_request", "ID inválido")
+		return
+	}
+	expected, err := h.settings.GetWebhookAPIKey(r.Context())
+	if err != nil {
+		respondError(w, http.StatusInternalServerError, "internal_error", err.Error())
+		return
+	}
+	provided := r.Header.Get("X-Webhook-Key")
+	if expected == "" || provided == "" || subtle.ConstantTimeCompare([]byte(provided), []byte(expected)) != 1 {
+		respondError(w, http.StatusUnauthorized, "unauthorized", "api_key de webhook inválida")
 		return
 	}
 	delivered, failed, err := h.service.RunJob(r.Context(), accountID)

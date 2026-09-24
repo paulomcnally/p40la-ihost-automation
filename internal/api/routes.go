@@ -54,6 +54,10 @@ func BuildRouter(handler *Handler, auth *services.AuthService, apps *AppsHandler
 	mux.Handle("POST /api/accounts/{accountId}/webhook:test", authMiddleware(http.HandlerFunc(webhooks.TestWebhook)))
 	mux.Handle("GET /api/accounts/{accountId}/webhook/logs", authMiddleware(http.HandlerFunc(webhooks.ListWebhookLogs)))
 
+	// Run manual del job por token server-to-server (SPEC-017). Consumido por
+	// p40la-ihost (SPEC-092). Autenticado por header X-Webhook-Key, sin sesión.
+	mux.HandleFunc("POST /api/accounts/{accountId}/webhook:run", webhooks.RunWebhook)
+
 	// Assets estáticos (JS/CSS bundles del build de Vite)
 	assetsFS := http.FileServer(http.Dir(filepath.Join(staticDir, "assets")))
 	mux.Handle("GET /assets/{file...}", http.StripPrefix("/assets/", assetsFS))
