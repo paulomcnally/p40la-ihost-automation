@@ -71,6 +71,17 @@
       "api_key": "API key global",
       "api_key_placeholder": "Ej. 7381d6dc...",
       "api_key_hint": "Clave compartida (mínimo 32 caracteres). Se envía en el header X-Webhook-Key."
+    },
+    "export": {
+      "title": "Respaldo de la base de datos",
+      "subtitle": "Descarga toda la información de la base de datos en un único archivo JSON.",
+      "button": "Exportar base de datos",
+      "warning": "El archivo incluye contraseñas hasheadas, credenciales de portales y la API key en texto plano. Guárdalo en un lugar seguro y no lo compartas.",
+      "confirm_title": "Exportar toda la base de datos",
+      "confirm_hint": "Se descargará un archivo JSON con toda la base de datos, incluidos los secretos en texto plano.",
+      "confirm": "Descargar JSON",
+      "downloading": "Exportando...",
+      "success": "Export descargado"
     }
   },
   "plugins": {

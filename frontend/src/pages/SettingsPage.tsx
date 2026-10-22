@@ -31,6 +31,8 @@ export default function SettingsPage() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
+  const [showExportDialog, setShowExportDialog] = useState(false)
+  const [exporting, setExporting] = useState(false)
 
   const load = async () => {
     setLoading(true)
@@ -59,6 +61,28 @@ export default function SettingsPage() {
       setError(err instanceof Error ? err.message : t('errors.generic'))
     } finally {
       setSaving(false)
+    }
+  }
+
+  const handleExport = async () => {
+    setExporting(true)
+    try {
+      const { blob, filename } = await api.settings.exportDatabase()
+      const url = URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = url
+      link.download = filename
+      document.body.appendChild(link)
+      link.click()
+      link.remove()
+      URL.revokeObjectURL(url)
+      setShowExportDialog(false)
+      showToast(t('settings.export.success'), 'success')
+    } catch (err: unknown) {
+      setShowExportDialog(false)
+      showToast(err instanceof Error ? err.message : t('errors.generic'), 'error')
+    } finally {
+      setExporting(false)
     }
   }
 
@@ -108,6 +132,55 @@ export default function SettingsPage() {
           </div>
         )}
       </div>
+
+      <div className="bg-card rounded-ios shadow-ios p-5 mt-4">
+        <h3 className="font-semibold">{t('settings.export.title')}</h3>
+        <p className="text-sm text-text-secondary mt-1">{t('settings.export.subtitle')}</p>
+        <div className="bg-warning/10 text-text text-sm p-3 rounded-ios-sm mt-3">
+          {t('settings.export.warning')}
+        </div>
+        <div className="flex justify-end mt-4">
+          <button
+            onClick={() => setShowExportDialog(true)}
+            className="px-4 py-2 rounded-ios-sm bg-primary text-white font-medium hover:bg-primary-hover transition-colors min-h-[44px]"
+          >
+            {t('settings.export.button')}
+          </button>
+        </div>
+      </div>
+
+      {showExportDialog && (
+        <div
+          className="fixed inset-0 bg-black/30 z-50 flex items-center justify-center p-4"
+          onClick={() => !exporting && setShowExportDialog(false)}
+        >
+          <div
+            className="bg-card rounded-ios shadow-ios p-5 w-full max-w-md"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 className="text-lg font-semibold mb-2">{t('settings.export.confirm_title')}</h3>
+            <p className="text-sm text-text-secondary">{t('settings.export.confirm_hint')}</p>
+            <div className="flex gap-2 justify-end mt-5">
+              <button
+                type="button"
+                onClick={() => setShowExportDialog(false)}
+                disabled={exporting}
+                className="px-4 py-2 rounded-ios-sm border border-border text-text-secondary hover:bg-bg transition-colors min-h-[44px] disabled:opacity-50"
+              >
+                {t('app.cancel')}
+              </button>
+              <button
+                type="button"
+                onClick={handleExport}
+                disabled={exporting}
+                className="px-4 py-2 rounded-ios-sm bg-primary text-white font-medium hover:bg-primary-hover disabled:opacity-50 transition-colors min-h-[44px]"
+              >
+                {exporting ? t('settings.export.downloading') : t('settings.export.confirm')}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

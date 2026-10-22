@@ -20,6 +20,24 @@ function post<T>(path: string, body: unknown) { return request<T>(path, { method
 function put<T>(path: string, body: unknown) { return request<T>(path, { method: 'PUT', body: JSON.stringify(body) }) }
 function del(path: string) { return request(path, { method: 'DELETE' }) }
 
+async function downloadExport(pretty = false): Promise<{ blob: Blob; filename: string }> {
+  const res = await fetch(`/api/settings/export${pretty ? '?pretty=true' : ''}`)
+  if (res.status === 401) {
+    window.location.href = '/login'
+    throw new Error('unauthorized')
+  }
+  if (!res.ok) {
+    const data = await res.json().catch(() => ({}))
+    throw new Error(data.message || 'Request failed')
+  }
+  const disposition = res.headers.get('Content-Disposition') ?? ''
+  const match = /filename="?([^";]+)"?/.exec(disposition)
+  return {
+    blob: await res.blob(),
+    filename: match?.[1] ?? 'p40la-export.json',
+  }
+}
+
 export interface App {
   id: number
   name: string
@@ -139,6 +157,7 @@ export const api = {
   settings: {
     get: () => get<Record<string, string>>('/api/settings'),
     setLanguage: (language: string) => post('/api/settings/language', { language }),
+    exportDatabase: downloadExport,
   },
   webhooks: {
     getSettings: () => get<WebhookSettings>('/api/settings/webhook'),

@@ -71,6 +71,17 @@
       "api_key": "Global API key",
       "api_key_placeholder": "E.g. 7381d6dc...",
       "api_key_hint": "Shared key (min 32 chars). Sent in the X-Webhook-Key header."
+    },
+    "export": {
+      "title": "Database backup",
+      "subtitle": "Download all database information as a single JSON file.",
+      "button": "Export database",
+      "warning": "The file includes hashed passwords, portal credentials and the API key in plain text. Store it somewhere safe and do not share it.",
+      "confirm_title": "Export the whole database",
+      "confirm_hint": "A JSON file with the entire database will be downloaded, including secrets in plain text.",
+      "confirm": "Download JSON",
+      "downloading": "Exporting...",
+      "success": "Export downloaded"
     }
   },
   "plugins": {

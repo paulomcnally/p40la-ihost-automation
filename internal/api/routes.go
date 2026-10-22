@@ -9,7 +9,7 @@ import (
 )
 
 // BuildRouter configura y devuelve el enrutador principal.
-func BuildRouter(handler *Handler, auth *services.AuthService, apps *AppsHandlers, plugins *PluginsHandlers, bills *BillsHandlers, webhooks *WebhookHandlers, staticDir string) http.Handler {
+func BuildRouter(handler *Handler, auth *services.AuthService, apps *AppsHandlers, plugins *PluginsHandlers, bills *BillsHandlers, webhooks *WebhookHandlers, exports *ExportHandlers, staticDir string) http.Handler {
 	mux := http.NewServeMux()
 
 	authMiddleware := AuthMiddleware(auth)
@@ -37,6 +37,9 @@ func BuildRouter(handler *Handler, auth *services.AuthService, apps *AppsHandler
 	mux.Handle("PUT /api/apps/{id}/accounts/{accountId}", authMiddleware(http.HandlerFunc(apps.UpdateAccount)))
 	mux.Handle("DELETE /api/apps/{id}/accounts/{accountId}", authMiddleware(http.HandlerFunc(apps.DeleteAccount)))
 	mux.Handle("POST /api/accounts/{accountId}/credentials:reveal", authMiddleware(http.HandlerFunc(apps.RevealCredentials)))
+
+	// Respaldo completo de la base de datos en JSON (SPEC-018)
+	mux.Handle("GET /api/settings/export", authMiddleware(http.HandlerFunc(exports.ExportDatabase)))
 
 	// APIs de plugins y facturas
 	mux.Handle("GET /api/plugins", authMiddleware(http.HandlerFunc(plugins.ListPlugins)))

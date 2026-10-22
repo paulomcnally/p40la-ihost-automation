@@ -10,13 +10,13 @@ import (
 	"os"
 	"path/filepath"
 
+	pluginall "github.com/paulomcnally/p40la-ihost-automation-plugins/all"
 	"github.com/paulomcnally/p40la-ihost-automation/internal/api"
 	"github.com/paulomcnally/p40la-ihost-automation/internal/config"
 	"github.com/paulomcnally/p40la-ihost-automation/internal/db"
 	"github.com/paulomcnally/p40la-ihost-automation/internal/plugins"
 	"github.com/paulomcnally/p40la-ihost-automation/internal/services"
 	"github.com/paulomcnally/p40la-ihost-automation/internal/storage"
-	pluginall "github.com/paulomcnally/p40la-ihost-automation-plugins/all"
 )
 
 func main() {
@@ -71,6 +71,7 @@ func main() {
 	authService := services.NewAuthService(userStorage, settingsStorage, cfg)
 	appSettingsService := services.NewAppSettingsService(settingsStorage)
 	appsService := services.NewAppsService(appsStorage, pluginsStorage)
+	exportService := services.NewExportService(database)
 
 	registry := plugins.NewRegistry()
 	pluginall.RegisterAll(registry)
@@ -90,10 +91,11 @@ func main() {
 	pluginsHandlers := api.NewPluginsHandlers(billsService)
 	billsHandlers := api.NewBillsHandlers(billsService)
 	webhookHandlers := api.NewWebhookHandlers(appSettingsService, webhookService)
+	exportHandlers := api.NewExportHandlers(exportService)
 
 	handler := api.NewHandler(authService, settingsHandlers)
 
-	router := api.BuildRouter(handler, authService, appsHandlers, pluginsHandlers, billsHandlers, webhookHandlers, "./public")
+	router := api.BuildRouter(handler, authService, appsHandlers, pluginsHandlers, billsHandlers, webhookHandlers, exportHandlers, "./public")
 
 	addr := ":" + cfg.Port
 	slog.Info("iniciando servidor", "addr", addr, "version", cfg.Version)

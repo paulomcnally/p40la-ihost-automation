@@ -6,14 +6,14 @@ Este directorio contiene todas las especificaciones técnicas del proyecto `p40l
 
 | Métrica | Valor |
 |---------|-------|
-| **Total de specs** | 17 |
+| **Total de specs** | 18 |
 | **En draft** | 0 🟡 |
 | **Pending execution** | 0 🔵 |
 | **In progress** | 0 🟣 |
 | **Pending release** | 0 🟠 |
-| **Released** | 16 🟢 |
+| **Released** | 17 🟢 |
 | **Canceladas** | 1 ⚫ |
-| **Último ID usado** | SPEC-017 |
+| **Último ID usado** | SPEC-018 |
 
 ---
 
@@ -21,6 +21,7 @@ Este directorio contiene todas las especificaciones técnicas del proyecto `p40l
 
 | ID | Título | Estado | Fecha Creación | Autor |
 |----|--------|--------|----------------|-------|
+| SPEC-018 | Export completo de la base de datos a JSON desde Settings | released | 2026-10-21 | opencode |
 | SPEC-017 | Endpoint de run manual de webhook por cuenta (webhook:run) con auth por token | released | 2026-09-24 | opencode |
 | SPEC-016 | issue_date y due_date en webhook por plugin | released | 2026-09-19 | paulomcnally |
 | SPEC-015 | Plugins en módulo privado con dominios ofuscados | released | 2026-09-15 | paulomcnally |
@@ -106,6 +107,8 @@ docs/specs/
 ```
 
 ---
+
+*Última actualización de este tracker: 2026-10-21 — SPEC-018 (Export completo de la base de datos a JSON desde Settings) **released**: versión 0.1.11. Endpoint autenticado `GET /api/settings/export` que streamea toda la base como JSON (`users` con `password_hash`, `settings` con la `api_key`, `apps`, `accounts` con credenciales en claro, `plugins`, `bills` con `raw`, `webhook_logs` y migraciones), envoltorio versionado con `counts`, `?pretty=true` y auditoría en log; servicio genérico `SELECT *` con `json.Encoder` (memoria constante) y UI en Settings con tarjeta + modal de advertencia + descarga Blob, i18n es/en. 4 tests unitarios + E2E local OK; `go build` y `npm run build` OK; cero migraciones y cero dependencias nuevas. Issue #20 cerrado. Deploy a iHost por el usuario; pendiente prueba de carga y revisión visual en darkmode.
 
 *Última actualización de este tracker: 2026-09-19 — SPEC-016 (issue_date y due_date en webhook por plugin) **released**: el contrato de webhooks de p40la-ihost (docs/webhooks-api.md v1.2, SPEC-081) agregó `issue_date` (emisión) y `due_date` (vencimiento) opcionales; este repo debe enviarlos por plugin solo cuando la API externa los expone. Investigación completada: claro ✅✅ (`fechaEmision`/`fechaVencimiento`), enacal ✅✅ (`Emision`/`Vence` DD/MM/YYYY), tigo ✅`dueDate - 1 mes + 1 día` (emisión = día 20 del mes anterior)/✅`dueDate`, disnorte ✅`FechaRecibo`/✅ +20 días (regla de negocio confirmada por el usuario; la API devuelve 0001-01-01), assa ✅`FECHA`/✅`VENCIMIENTO` en polifacturas y ✅`MES_PAGADO`/✅`MES_PAGADO` (fecha de vencimiento según el portal; emisión = vencimiento por regla del usuario) en recibos. Diseño: campo `IssueDate` en contrato `plugins.Bill` (repo privado, tag semver) + `BillPayload`/`buildWebhookPayload` condicionales en este repo; cero migraciones. Issue #18 abierto.
 
